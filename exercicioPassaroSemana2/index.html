@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Exercício do Pássaro</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+
+var config = { // objeto com as informações de configuração do jogo
+        type: Phaser.AUTO, // onde o jogo será renderizado
+        width: 800, // largura do quadro do jogo na tela
+        height: 600, // altura do quadro do jogo na tela
+
+        // INFO: um padrão do Phaser é carregar as coordenadas baseadas no centro das imagens (ex.: 400,300) e não na origem do canva com x e y = 0 | isso pode ser mudado com .setOrigin
+
+        scene: {
+            preload: preload,
+            create: create, 
+            update: update, 
+        }
+    };
+
+    var game = new Phaser.Game(config); // explicar
+
+    var passarinho;
+
+    function preload() { // faz o load de todos os assets que serão utilizados no jogo
+        this.load.image('bg', 'assets/bg_space.png'); // o primeiro parâmetro é a key do asset, utilizada para o chamar durante todo o código
+        this.load.spritesheet('bird', 'assets/bird-purple.png', { frameWidth: 75, frameHeight: 75 });
+    }
+
+    function create() { // mostra as imagens que já foram carregadas pela function preload | a ordem em que se cria as imagens é a ordem em que vão aparecer no canva
+        this.add.image(400, 300, 'bg').setScale(1.2); // image é um objeto estático
+        passarinho = this.add.sprite (100, 300, 'bird').setScale(1.3); // sprite é um objeto que aceita animações
+
+        this.anims.create ({ // objeto que cria uma animação
+            key: 'fly', // nome da animação
+            frames: this.anims.generateFrameNumbers ('bird', {start: 0, end: 7}), // frames a serem utilizados para compor a animação
+            frameRate: 10, // quantidade de frames em 1 segund
+            repeat: -1, // indica a quantidade de repetições do sprite: -1 = loop, 0 = sem repetição, inteiro positivo = número de repetições a serem criadas
+        });
+
+        passarinho.anims.play ('fly', true);
+    }
+
+    function update() {
+        
+        if (passarinho.x === 100) { // Quando o pássaro está na posição 100, ele deve começar seu movimento de ida = true
+            passarinho.setFlip (false, false); // set.Flip trabalha com valores horizontal/vertical -> não há nenhuma mudança de sentido, pois o pássaro já está voltado para a posição de maior valor no eixo x
+            passarinho.ida = true;
+        }
+
+        if (passarinho.x < 700 && passarinho.ida === true) { // enquanto a posição do pássaro for menor que 700 e ele tiver a necessidade de fazer seu movimento de ida, a sua posição horizontal crescerá 5 pixels a cada movimentação.
+            console.log ("O passáro vai se mover para a direita");
+            passarinho.x += 5;
+        }
+
+        if (passarinho.x === 700) { // quando o pássaro atinge a posição 700, ele não tem mais necessidade de fazer o movimento de ida (movimento de crescimento do valor da posição x) e o asset vira para o lado oposto. Agora, ele irá iniciar o movimento de "desnecessidade", ou seja, de volta
+            passarinho.setFlip (true, false);
+            passarinho.ida = false;
+        }
+
+        if (passarinho.x > 100 && passarinho.ida === false) { // enquanto a posição do pássaro for maior que 100 no eixo x e ele estiver em condição de "desnecessidade" de ir no eixo x, sua posição sofrerá descréscimo de 5 pixels.
+            console.log ("O pássaro vai se mover para a esquerda");
+            passarinho.x -= 5;
+        }
+
+        if (passarinho.y === 300) {
+            passarinho.subida = true;
+        }
+
+        if (passarinho.y < 500 && passarinho.subida === true) {
+            passarinho.y -= 5;
+        }
+
+        if (passarinho.y === 100) {
+            passarinho.subida = false;
+        }
+
+        if (passarinho.y >= 100 && passarinho.subida === false) {
+            passarinho.y += 10;
+        }
+
+
+        }
+    
+
+
+</script>
+
+</body>
+</html>
+
+
